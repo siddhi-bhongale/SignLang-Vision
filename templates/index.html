@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SignLang Vision</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    --cyan: #00e6ff;
+    --green: #00ff88;
+    --dark: #0a0f1e;
+    --card: rgba(255,255,255,0.06);
+    --border: rgba(0,230,255,0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--dark);
+    color: #fff;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+        radial-gradient(ellipse 80% 60% at 20% 20%, rgba(0,230,255,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 80%, rgba(0,255,136,0.05) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+nav {
+    background: rgba(10,15,30,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 0;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: auto;
+    padding: 0 30px;
+}
+
+.logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--cyan);
+    text-shadow: 0 0 20px rgba(0,230,255,0.6);
+    cursor: pointer;
+    letter-spacing: 2px;
+}
+
+.nav-links a {
+    color: rgba(255,255,255,0.7);
+    margin-left: 30px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--cyan);
+    transition: width 0.3s;
+}
+
+.nav-links a:hover { color: var(--cyan); }
+.nav-links a:hover::after { width: 100%; }
+
+.page {
+    display: none;
+    padding-top: 90px;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    animation: fadeIn 0.4s ease;
+}
+
+.page.active { display: flex; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.home-container {
+    text-align: center;
+    max-width: 700px;
+    padding: 60px 40px;
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 60px rgba(0,230,255,0.08);
+}
+
+.home-container h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--cyan), var(--green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    color: rgba(255,255,255,0.6);
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.badge {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--cyan);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.btn {
+    padding: 13px 32px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, var(--cyan), #0077cc);
+    border: none;
+    color: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,230,255,0.4);
+}
+
+.btn.secondary {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid var(--border);
+}
+
+.btn.secondary:hover {
+    background: rgba(0,230,255,0.1);
+    box-shadow: 0 8px 20px rgba(0,230,255,0.2);
+}
+
+.recognition-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 20px;
+    width: 100%;
+    max-width: 800px;
+}
+
+.page-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--cyan), var(--green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+#camera-box {
+    width: 640px;
+    height: 480px;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 2px solid var(--border);
+    box-shadow: 0 0 40px rgba(0,230,255,0.2);
+    background: #000;
+    position: relative;
+}
+
+#camera-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.9rem;
+}
+
+#video-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 640px;
+}
+
+.result-label {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#letter-box {
+    font-family: 'Orbitron', monospace;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--green);
+    text-shadow: 0 0 20px rgba(0,255,136,0.5);
+    min-width: 80px;
+    text-align: center;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #444;
+    margin-left: auto;
+    transition: all 0.3s;
+}
+
+.status-dot.active {
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.btn-row {
+    display: flex;
+    gap: 12px;
+}
+
+.learn-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.learn-img {
+    max-width: 75%;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 0 40px rgba(0,230,255,0.1);
+    transition: transform 0.3s;
+    margin-top: 24px;
+}
+
+.learn-img:hover { transform: scale(1.02); }
+
+.feedback-container {
+    width: 100%;
+    max-width: 560px;
+    padding: 20px;
+}
+
+.feedback-form {
+    background: var(--card);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.feedback-form input:focus,
+.feedback-form textarea:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0,230,255,0.1);
+}
+
+.feedback-form textarea { resize: vertical; min-height: 120px; }
+
+#response {
+    margin-top: 12px;
+    text-align: center;
+    color: var(--green);
+    font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+
+<nav>
+    <div class="nav-container">
+        <div class="logo" onclick="showPage('home')">SignLang Vision</div>
+        <div class="nav-links">
+            <a href="#" onclick="showPage('recognition')">Recognition</a>
+            <a href="#" onclick="showPage('learn')">Learn</a>
+            <a href="#" onclick="showPage('feedback')">Feedback</a>
+        </div>
+    </div>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="page active">
+    <div class="home-container">
+        <div class="badge">AI Powered</div>
+        <h1>SignLang Vision</h1>
+        <p class="subtitle">Real-time Indian Sign Language recognition powered by MediaPipe & Machine Learning. Empowering communication, one gesture at a time.</p>
+        <button class="btn" onclick="showPage('recognition')">Start Recognition</button>
+    </div>
+</div>
+
+<!-- RECOGNITION -->
+<div id="recognition" class="page">
+    <div class="recognition-container">
+        <div class="page-title">Live Recognition</div>
+
+        <div id="camera-box">
+            <div id="camera-placeholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                </svg>
+                <span>Click Start to activate camera</span>
+            </div>
+            <img id="video-feed" alt="Camera Feed">
+        </div>
+
+        <div class="result-card">
+            <div>
+                <div class="result-label">Detected Letter</div>
+                <div id="letter-box">-</div>
+            </div>
+            <div class="status-dot" id="status-dot"></div>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn" onclick="startRecognition()">▶ Start</button>
+            <button class="btn secondary" onclick="stopRecognition()">■ Stop</button>
+        </div>
+    </div>
+</div>
+
+<!-- LEARN -->
+<div id="learn" class="page">
+    <div class="learn-container">
+        <div class="page-title">Learn Sign Language</div>
+        <img src="/static/images/ISL_DATASETS.jpg" class="learn-img" alt="ISL Dataset">
+    </div>
+</div>
+
+<!-- FEEDBACK -->
+<div id="feedback" class="page">
+    <div class="feedback-container">
+        <div class="page-title">Feedback</div>
+        <div class="feedback-form">
+            <input type="text" id="fb-name" placeholder="Your Name">
+            <input type="email" id="fb-email" placeholder="Your Email">
+            <textarea id="fb-message" placeholder="Share your experience..."></textarea>
+            <button class="btn" onclick="submitFeedback()">Submit Feedback</button>
+        </div>
+        <div id="response"></div>
+    </div>
+</div>
+
+<script>
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+let interval;
+
+function startRecognition() {
+    const feed = document.getElementById("video-feed");
+    const placeholder = document.getElementById("camera-placeholder");
+    const dot = document.getElementById("status-dot");
+
+    feed.src = "/video_feed?" + new Date().getTime();
+    feed.style.display = "block";
+    placeholder.style.display = "none";
+    dot.classList.add("active");
+
+    interval = setInterval(getPrediction, 300);
+}
+
+function stopRecognition() {
+    const feed = document.getElementById("video-feed");
+    const placeholder = document.getElementById("camera-placeholder");
+    const dot = document.getElementById("status-dot");
+
+    feed.src = "";
+    feed.style.display = "none";
+    placeholder.style.display = "flex";
+    dot.classList.remove("active");
+
+    clearInterval(interval);
+    document.getElementById("letter-box").innerText = "-";
+    fetch('/stop_camera').catch(() => {});
+}
+
+function getPrediction() {
+    fetch('/get_prediction')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById("letter-box").innerText = data.letter || "-";
+        })
+        .catch(() => stopRecognition());
+}
+
+function submitFeedback() {
+    const name = document.getElementById("fb-name").value;
+    const email = document.getElementById("fb-email").value;
+    const feedback = document.getElementById("fb-message").value;
+
+    if (!name || !email || !feedback) {
+        document.getElementById("response").innerText = "Please fill all fields.";
+        document.getElementById("response").style.color = "#ff6b6b";
+        return;
+    }
+
+    fetch('/submit_feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, feedback })
+    })
+    .then(res => res.json())
+    .then(() => {
+        document.getElementById("response").innerText = "✓ Thank you for your feedback!";
+        document.getElementById("response").style.color = "#00ff88";
+        document.getElementById("fb-name").value = "";
+        document.getElementById("fb-email").value = "";
+        document.getElementById("fb-message").value = "";
+    })
+    .catch(() => {
+        document.getElementById("response").innerText = "Something went wrong. Try again.";
+    });
+}
+</script>
+</body>
+</html>
